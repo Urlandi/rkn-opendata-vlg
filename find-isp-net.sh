@@ -1,0 +1,1 @@
+grep -B 3 -A 38 "region_code>34<" $1 | grep -B 13 -A 29 "is_pd>1<" | grep -B 18 -A 24 -i "is_tm>1<" | grep -A 42 -i "$2"

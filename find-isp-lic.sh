@@ -1,0 +1,1 @@
+grep -B 7 -iE "territory>.*волгоград" $1 | grep -B 4 -A 3 -iE "kind_description>.*(данных, за исключением|телемати)" | grep -A 7 -i "$2"

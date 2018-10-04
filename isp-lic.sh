@@ -1,0 +1,1 @@
+grep -B 7 -iE "territory>.*волгоград" $1 | grep -B 4 -iE "kind_description>.*(данных, за исключением|телемати)" | grep "<rkn:name>" | sed -e "s/\&quot\;\|\&amp\;//g; s/.*<rkn:name>\(.*\)<\/.*/\1/g" | sort -u > $2
