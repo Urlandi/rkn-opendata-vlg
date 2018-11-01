@@ -4,9 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2018-10-04
+## [Unreleased] - 2018-11-01
 ### Added
-- Начальная версия
+- Формируется CSV файл с уникальными парами провайдер-лицензия
+
+## New - 2018-10-04
+### Added
+- Начальня версия
 
 [Unreleased]: https://github.com/urlandi/rkn-opendata-vlg
 
