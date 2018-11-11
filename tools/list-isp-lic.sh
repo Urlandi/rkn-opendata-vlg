@@ -18,7 +18,7 @@ declare -r SED_CMD_CLEAN="clean-isp.sed"
 declare -r SED_CMD_CONCAT="concat-isp-lic.sed"
 
 
-# echo "Name,Licence,Date Reg,License Type,Date Start,Date End"
+echo "Name,Licence,Date Reg,License Type,Date Start,Date End"
 
 ./find-isp-lic.sh "${file_opendata}" | sed -n -f "${SED_CMD_CLEAN}" | sed -n -f "${SED_CMD_CONCAT}" | LC_COLLATE=C sort -bfu
 
