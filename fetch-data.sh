@@ -23,12 +23,14 @@ declare -r CMD_GREP='grep -s -i -e'
 declare -r GREP_DATA=',"'
 
 function print_help {
-    echo '(c) elsv-v.ru by Mikhail Vasilyev'
+    echo "(c) elsv-v.ru by Mikhail Vasilyev"
     echo
-    echo 'Usage as:'
-    echo '  ./fetch-data.sh <open data name>'
-    echo 'where <open data name> is:'    
-    echo '  "lic" or "net"'
+    echo "Usage as:"
+    echo "  ./fetch-data.sh <lic|net>"
+    echo
+    echo "where:"
+    echo "  lic - get license data"
+    echo "  net - get network infra data"
     echo
 }
 
@@ -72,7 +74,7 @@ url_tree_data="${BASE_URL}${url_type}"
 
 url_list_data="${url_tree_data}/${URL_FILE_NAME}"
 
-url_data=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d , -f 2)
+url_data=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d , -f 2 | tr -d '"')
 
 status_url_data="${?}"
 
@@ -81,18 +83,16 @@ if [ "${status_url_data}" -ne "${SUCCESS}" ]; then
     exit "${ERROR}"
 fi
 
-echo "${url_data}"
-
-len_url_tree_data="${#url_tree_data}"
+len_url_tree_data=$["${#url_tree_data}"+2]
 
 data_file_name=$(echo "${url_data}" | cut -c"${len_url_tree_data}-")
 
-if [ -f "${data_file_name}"]; then
+if [ -f "${data_file_name}" ]; then
     print_error "${ERROR_EXISTS}"
     exit "${SUCCESS}"
 fi
 
-"${CMD_CURL}" "${CURL_GET}"
+$(${CMD_CURL} ${CURL_GET} ${url_data})
 
 status_get_data="${?}"
 
