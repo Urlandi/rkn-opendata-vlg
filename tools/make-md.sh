@@ -41,7 +41,7 @@ function format_md {
     name_isp="${1}"    
 
     echo "1. ${name_isp}"
-    isp_data_line=$(grep -i "${name_isp}" "${file_isp_lic}" | cut -d , -f 2,4-)    
+    isp_data_line=$(grep -E "^\"${name_isp}\"" "${file_isp_lic}" | cut -d , -f 2,4-)    
     
     if [ -n "${isp_data_line}" ]; then
 
