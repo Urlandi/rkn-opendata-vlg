@@ -17,7 +17,7 @@ file_opendata="${1}"
 declare -r GREP_NAMEONLY=":os_name>"
 declare -r SED_CMD_CLEAN="clean-isp.sed"
 
-
+echo "Name"
 ./find-isp-net.sh "${file_opendata}" | grep -i "${GREP_NAMEONLY}" | sed -n -f "${SED_CMD_CLEAN}" | LC_COLLATE=C sort -bfu
 
 exit "${SUCCESS}"
