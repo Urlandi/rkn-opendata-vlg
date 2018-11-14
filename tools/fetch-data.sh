@@ -16,7 +16,7 @@ declare -r TYPE_LIC='lic'
 declare -A LIST_DATA
 LIST_DATA=(["${TYPE_NET}"]='7705846236-communicationInfrastructureRF' ["${TYPE_LIC}"]='7705846236-LicComm')
 
-declare -r CMD_CURL='curl -s --fail-early'
+declare -r CMD_CURL='curl -s'
 declare -r CURL_GET='-O'
 
 declare -r CMD_GREP='grep -s -i -e'
