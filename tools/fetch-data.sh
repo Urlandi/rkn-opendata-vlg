@@ -89,7 +89,7 @@ data_file_name=$(echo "${url_data}" | cut -c"${len_url_tree_data}-")
 
 if [ -f "${data_file_name}" ]; then
     print_error "${ERROR_EXISTS}"
-    exit "${SUCCESS}"
+    exit "${ERROR}"
 fi
 
 $(${CMD_CURL} ${CURL_GET} ${url_data})
@@ -100,5 +100,7 @@ if [ "${status_get_data}" -ne "${SUCCESS}" ]; then
     print_error "${ERROR_FETCH}"
     exit "${ERROR}"
 fi
+
+echo -n "${data_file_name}"
 
 exit "${SUCCESS}"
