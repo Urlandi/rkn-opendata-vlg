@@ -75,7 +75,9 @@ url_tree_data="${BASE_URL}${url_type}"
 
 url_list_data="${url_tree_data}/${URL_FILE_NAME}"
 
-${CMD_CURL} ${CURL_POST} "${url_list_data}"
+ddosid=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | tr -d '\n\r')
+
+${CMD_CURL} ${CURL_POST} "${BASE_URL}${ddosid}" &> /dev/null
 url_data=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d , -f 2 | tr -d '"' | tr -d '\n\r')
 
 status_url_data="${?}"
