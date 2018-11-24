@@ -18,6 +18,7 @@ LIST_DATA=(["${TYPE_NET}"]='7705846236-communicationInfrastructureRF' ["${TYPE_L
 
 declare -r CMD_CURL='curl -s'
 declare -r CURL_GET='-O'
+declare -r CURL_POST='-X POST'
 
 declare -r CMD_GREP='grep -s -i -e'
 declare -r GREP_DATA=',"'
@@ -74,6 +75,7 @@ url_tree_data="${BASE_URL}${url_type}"
 
 url_list_data="${url_tree_data}/${URL_FILE_NAME}"
 
+${CMD_CURL} ${CURL_POST} "${url_list_data}"
 url_data=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d , -f 2 | tr -d '"' | tr -d '\n\r')
 
 status_url_data="${?}"
@@ -92,7 +94,7 @@ if [ -f "${data_file_name}" ]; then
     exit "${ERROR}"
 fi
 
-$(${CMD_CURL} ${CURL_GET} ${url_data})
+${CMD_CURL} ${CURL_GET} "${url_data}"
 
 status_get_data="${?}"
 
