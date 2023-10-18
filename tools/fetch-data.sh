@@ -14,7 +14,8 @@ declare -r URL_FILE_NAME='meta.csv'
 declare -r TYPE_NET='net'
 declare -r TYPE_LIC='lic'
 declare -A LIST_DATA
-LIST_DATA=(["${TYPE_NET}"]='7705846236-communicationInfrastructureRF' ["${TYPE_LIC}"]='7705846236-LicComm')
+LIST_DATA=(["${TYPE_LIC}"]='7705846236-LicComm')
+#LIST_DATA=(["${TYPE_NET}"]='7705846236-communicationInfrastructureRF' ["${TYPE_LIC}"]='7705846236-LicComm')
 
 declare -r CMD_CURL='curl -s'
 declare -r CURL_GET='-O'
@@ -27,11 +28,12 @@ function print_help {
     echo "(c) elsv-v.ru by Mikhail Vasilyev"
     echo
     echo "Usage as:"
-    echo "  ./fetch-data.sh <lic|net>"
+    echo "  ./fetch-data.sh lic"
+    #echo "  ./fetch-data.sh <lic|net>"
     echo
     echo "where:"
     echo "  lic - get license data"
-    echo "  net - get network infra data"
+    #echo "  net - get network infra data"
     echo
 }
 
