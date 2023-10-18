@@ -4,18 +4,17 @@ set -o nounset
 set -o pipefail
 
 declare -r ERROR=1
+
 declare -r SUCCESS=0
 
 declare -r COUNT_PARAMS_REQ=1
 
-declare -r BASE_URL='http://rkn.gov.ru/opendata/'
+declare -r BASE_URL='https://rkn.gov.ru/opendata/'
 declare -r URL_FILE_NAME='meta.csv'
 
-#declare -r TYPE_NET='net'
 declare -r TYPE_LIC='lic'
 declare -A LIST_DATA
 LIST_DATA=(["${TYPE_LIC}"]='7705846236-LicComm')
-#LIST_DATA=(["${TYPE_NET}"]='7705846236-communicationInfrastructureRF' ["${TYPE_LIC}"]='7705846236-LicComm')
 
 declare -r CMD_CURL='curl -s'
 declare -r CURL_GET='-O'
@@ -29,11 +28,9 @@ function print_help {
     echo
     echo "Usage as:"
     echo "  ./fetch-data.sh lic"
-    #echo "  ./fetch-data.sh <lic|net>"
     echo
     echo "where:"
     echo "  lic - get license data"
-    #echo "  net - get network infra data"
     echo
 }
 
@@ -67,7 +64,6 @@ fi
 type_opendata="${1}"
 
 if [ "${type_opendata}" != "${TYPE_LIC}" ]; then
-#if [ "${type_opendata}" != "${TYPE_NET}" ] && [ "${type_opendata}" != "${TYPE_LIC}" ]; then
     print_help
     exit "${ERROR}"
 fi
@@ -78,26 +74,21 @@ url_tree_data="${BASE_URL}${url_type}"
 
 url_list_data="${url_tree_data}/${URL_FILE_NAME}"
 
-ddosid=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | tr -d '\n\r')
+data_file_name=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data/https:/http:}" | head -n 1 | cut -d '/' -f 6 | tr -d '"' | tr -d '\n\r')
 
-${CMD_CURL} ${CURL_POST} "${BASE_URL}${ddosid}" &> /dev/null
-url_data=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d , -f 2 | tr -d '"' | tr -d '\n\r')
+status_data_file_name="${?}"
 
-status_url_data="${?}"
-
-if [ "${status_url_data}" -ne "${SUCCESS}" ]; then
+if [ "${status_data_file_name}" -ne "${SUCCESS}" ]; then
     print_error "${ERROR_FETCH}"
     exit "${ERROR}"
 fi
-
-len_url_tree_data=$["${#url_tree_data}"+2]
-
-data_file_name=$(echo "${url_data}" | cut -c"${len_url_tree_data}-")
 
 if [ -f "${data_file_name}" ]; then
     print_error "${ERROR_EXISTS}"
     exit "${ERROR}"
 fi
+
+url_data="${url_tree_data}/${data_file_name}"
 
 ${CMD_CURL} ${CURL_GET} "${url_data}"
 
