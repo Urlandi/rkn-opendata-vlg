@@ -11,7 +11,7 @@ declare -r COUNT_PARAMS_REQ=1
 declare -r BASE_URL='http://rkn.gov.ru/opendata/'
 declare -r URL_FILE_NAME='meta.csv'
 
-declare -r TYPE_NET='net'
+#declare -r TYPE_NET='net'
 declare -r TYPE_LIC='lic'
 declare -A LIST_DATA
 LIST_DATA=(["${TYPE_LIC}"]='7705846236-LicComm')
@@ -66,7 +66,8 @@ fi
 
 type_opendata="${1}"
 
-if [ "${type_opendata}" != "${TYPE_NET}" ] && [ "${type_opendata}" != "${TYPE_LIC}" ]; then
+if [ "${type_opendata}" != "${TYPE_LIC}" ]; then
+#if [ "${type_opendata}" != "${TYPE_NET}" ] && [ "${type_opendata}" != "${TYPE_LIC}" ]; then
     print_help
     exit "${ERROR}"
 fi
