@@ -1,11 +1,15 @@
 # Concat
 :start
-
-/,--$/b print;
+/<rkn:territory>/b print;
+$b print;
 
 N;
-s/\n/,/g; t start;
+s/>\s*\r\n/>,/;
+b start;
+
 
 :print
-s/,--$//g
+s/\n/ /g;
+s/^\s\s*//;
+s/>,\s\s*</>,</g;
 p;
