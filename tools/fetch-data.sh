@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 set -o nounset
 set -o pipefail
@@ -17,11 +17,12 @@ declare -A LIST_DATA
 LIST_DATA=(["${TYPE_LIC}"]='7705846236-LicComm')
 
 declare -r CMD_CURL='curl -s'
-declare -r CURL_GET='-O'
 declare -r CURL_POST='-X POST'
 
 declare -r CMD_GREP='grep -s -i'
 declare -r GREP_DATA=',"'
+
+declare -r WORK_DIR='/home/mixae1/rkn'
 
 function print_help {
     echo "(c) elsv-v.ru by Mikhail Vasilyev"
@@ -94,7 +95,7 @@ fi
 
 url_data="${url_tree_data}/${data_file_name}"
 
-${CMD_CURL} ${CURL_GET} "${url_data}"
+${CMD_CURL} "${url_data}" -o "${WORK_DIR}/${data_file_name}"
 
 status_get_data="${?}"
 
@@ -105,7 +106,7 @@ fi
 
 declare -r CMD_UNZIP='unzip -n'
 
-${CMD_UNZIP} "${data_file_name}" &> /dev/null
+${CMD_UNZIP} "${WORK_DIR}/${data_file_name}" -d "${WORK_DIR}" &> /dev/null
 
 status_unzip="${?}"
 
@@ -124,12 +125,19 @@ declare -r DEFINE_INACTIVE=':lic_status_name>недействующая</rkn:'
 declare -r CMD_EGREP='grep -E -i -s'
 declare -r CMD_SED='sed -n'
 
-declare -r SED_CMD_CLEAN="clean-isp.sed"
-declare -r SED_CMD_CONCAT="concat-isp-lic.sed"
+sed_cmd_clean="${WORK_DIR}/clean-isp.sed"
+sed_cmd_concat="${WORK_DIR}/concat-isp-lic.sed"
 
-echo "Name,Licence,Date Start,Date End,Type"
-${CMD_EGREP} "${DEFINE_FIELDS}" "${file_opendata}" | ${CMD_SED} -f "${SED_CMD_CONCAT}" | ${CMD_GREP} -v "${DEFINE_INACTIVE}" | ${CMD_EGREP} "${DEFINE_TERRITORY}" | ${CMD_EGREP} "${DEFINE_LICENSE}" | ${CMD_SED} -f "${SED_CMD_CLEAN}" | sort -bfu
+file_volgograd_lic="${WORK_DIR}/volgograd.lic.csv"
+file_volgograd_md="$WORK_DIR/volgograd-isp.md"
 
-rm "${file_opendata}"
+${CMD_EGREP} "${DEFINE_FIELDS}" "${WORK_DIR}/${file_opendata}" | ${CMD_SED} -f "${sed_cmd_concat}" | ${CMD_GREP} -v "${DEFINE_INACTIVE}" | ${CMD_EGREP} "${DEFINE_TERRITORY}" | ${CMD_EGREP} "${DEFINE_LICENSE}" | ${CMD_SED} -f "${sed_cmd_clean}" | sort -bfu > "${file_volgograd_lic}"
+
+declare -r CMD_MAKEMD='make-md.sh'
+
+${WORK_DIR}/${CMD_MAKEMD} "${file_volgograd_lic}" > "${file_volgograd_md}"
+rm ${WORK_DIR}/*.xml
+rm ${WORK_DIR}/*.zip
+
 
 exit "${SUCCESS}"

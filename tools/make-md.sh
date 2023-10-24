@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/env bash
 
 set -o nounset
 set -o pipefail
@@ -6,13 +6,13 @@ set -o pipefail
 declare -r ERROR=1
 declare -r SUCCESS=0
 
-declare -r COUNT_PARAMS_REQ=2
+declare -r COUNT_PARAMS_REQ=1
 
 function print_help {
     echo "(c) elsv-v.ru by Mikhail Vasilyev"
     echo
     echo "Usage as:"
-    echo "  ./make-md.sh <isp list file> <isp lic list file>"
+    echo "  ./make-md.sh <isp lic list file>"
     echo    
 }
 
@@ -41,20 +41,21 @@ function format_md {
     name_isp="${1}"    
 
     echo "1. ${name_isp}"
-    isp_data_line=$(grep -E "^\"${name_isp}\"" "${file_isp_lic}" | cut -d , -f 2,4-)    
+    isp_data_line=$(grep -E "^${name_isp}" "${file_isp_lic}" | cut -d , -f 2-)    
     
     if [ -n "${isp_data_line}" ]; then
 
         while read -r isp_data; do
 
-            isp_lic=$(echo "${isp_data}" | rev | cut -d , -f 3- | rev)
+            isp_lic=$(echo "${isp_data}" | cut -d , -f 4-)
+	    isp_lic_num=$(echo "${isp_data}" | cut -d , -f 1)
             
-            isp_end_date=$(echo "${isp_data}" | rev | cut -d , -f 1 | cut -d- -f 3 | rev)        
+	    isp_end_date=$(echo "${isp_data}" | cut -d , -f 3 | cut -d- -f 1)        
             
             if [ "${year}" -ge "${isp_end_date}" ]; then
-                echo "    - <span style="color:red">${isp_lic}</span>"
+                echo "    - <span style="color:red">${isp_lic_num}, ${isp_lic}</span>"
             else
-                echo "    - ${isp_lic}"
+                echo "    - ${isp_lic_num}, ${isp_lic}"
             fi
         done < <(echo "${isp_data_line}")        
     fi
@@ -69,13 +70,7 @@ if [ "${count_params}" -ne "${COUNT_PARAMS_REQ}" ]; then
     exit "${ERROR}"
 fi
 
-file_all_isp="${1}"
-file_isp_lic="${2}"
-
-if [ ! -f "${file_all_isp}" ]; then
-    print_error "${ERROR_EXISTS}" "${file_all_isp}"
-    exit "${ERROR}"
-fi
+file_isp_lic="${1}"
 
 if [ ! -f "${file_isp_lic}" ]; then
     print_error "${ERROR_EXISTS}" "${file_isp_lic}"
@@ -87,9 +82,10 @@ year=$(date +"%Y")
 
 # Very slowly, but work. Need rewrite to sed
 
-while read -r name_isp; do
+while read name_isp
+    do
     format_md "${name_isp}"
-done<"${file_all_isp}"
+done < <(cut -d , -f 1 ${file_isp_lic} | sort -bfu)
 
 status_format="${?}"
 
