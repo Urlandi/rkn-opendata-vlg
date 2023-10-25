@@ -22,7 +22,8 @@ declare -r CURL_POST='-X POST'
 declare -r CMD_GREP='grep -s -i'
 declare -r GREP_DATA=',"'
 
-declare -r WORK_DIR='/home/mixae1/rkn'
+declare -r WORK_DIR="$(pwd)"
+script_dir="${WORK_DIR}/tools"
 
 function print_help {
     echo "(c) elsv-v.ru by Mikhail Vasilyev"
@@ -125,17 +126,17 @@ declare -r DEFINE_INACTIVE=':lic_status_name>недействующая</rkn:'
 declare -r CMD_EGREP='grep -E -i -s'
 declare -r CMD_SED='sed -n'
 
-sed_cmd_clean="${WORK_DIR}/clean-isp.sed"
-sed_cmd_concat="${WORK_DIR}/concat-isp-lic.sed"
+sed_cmd_clean="${script_dir}/clean-isp.sed"
+sed_cmd_concat="${script_dir}/concat-isp-lic.sed"
 
 file_volgograd_lic="${WORK_DIR}/volgograd.lic.csv"
-file_volgograd_md="$WORK_DIR/volgograd-isp.md"
+file_volgograd_md="${WORK_DIR}/volgograd-isp.md"
 
 ${CMD_EGREP} "${DEFINE_FIELDS}" "${WORK_DIR}/${file_opendata}" | ${CMD_SED} -f "${sed_cmd_concat}" | ${CMD_GREP} -v "${DEFINE_INACTIVE}" | ${CMD_EGREP} "${DEFINE_TERRITORY}" | ${CMD_EGREP} "${DEFINE_LICENSE}" | ${CMD_SED} -f "${sed_cmd_clean}" | sort -bfu > "${file_volgograd_lic}"
 
 declare -r CMD_MAKEMD='make-md.sh'
 
-${WORK_DIR}/${CMD_MAKEMD} "${file_volgograd_lic}" > "${file_volgograd_md}"
+${script_dir}/${CMD_MAKEMD} "${file_volgograd_lic}" > "${file_volgograd_md}"
 rm ${WORK_DIR}/*.xml
 rm ${WORK_DIR}/*.zip
 
