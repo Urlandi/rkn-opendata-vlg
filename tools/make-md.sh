@@ -41,7 +41,7 @@ function format_md {
     name_isp="${1}"    
 
     echo "1. ${name_isp}"
-    isp_data_line=$(grep -E "^${name_isp}" "${file_isp_lic}" | cut -d , -f 2-)    
+    isp_data_line=$(grep -E "^${name_isp}," "${file_isp_lic}" | cut -d , -f 2-)    
     
     if [ -n "${isp_data_line}" ]; then
 
@@ -85,7 +85,7 @@ year=$(date +"%Y")
 while read name_isp
     do
     format_md "${name_isp}"
-done < <(cut -d , -f 1 ${file_isp_lic} | sort -bfu)
+done < <(cut -d , -f 1 "${file_isp_lic}" | sort -bfu)
 
 status_format="${?}"
 
