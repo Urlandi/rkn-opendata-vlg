@@ -80,7 +80,7 @@ url_tree_data="${BASE_URL}${url_type}"
 
 url_list_data="${url_tree_data}/${URL_FILE_NAME}"
 
-data_file_name=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data/https:/http:}" | head -n 1 | cut -d '/' -f 6 | tr -d '"' | tr -d '\n\r')
+data_file_name=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d '/' -f 6 | tr -d '"' | tr -d '\n\r')
 
 status_data_file_name="${?}"
 
