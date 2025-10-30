@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 ### Changed
 - Информация о параметрах сети больше не публикуется в таком виде
+- Вместо .zip архивов публикуются сразу .xml
+- curl заменён на wget
 
 ## 0.1.0 - 2018-11-24
 ### Added

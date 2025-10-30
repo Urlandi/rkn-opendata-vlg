@@ -16,11 +16,14 @@ declare -r TYPE_LIC='lic'
 declare -A LIST_DATA
 LIST_DATA=(["${TYPE_LIC}"]='7705846236-LicComm')
 
+declare -r USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 YaBrowser/25.8.5.890 Yowser/2.5 Safari/537.36'
 declare -r CMD_CURL='curl -s'
 declare -r CURL_POST='-X POST'
 
 declare -r CMD_GREP='grep -s -i'
 declare -r GREP_DATA=',"'
+
+declare -r CMD_WGET='wget -q -t 10'
 
 declare -r WORK_DIR="$(pwd)"
 script_dir="${WORK_DIR}/tools"
@@ -80,7 +83,7 @@ url_tree_data="${BASE_URL}${url_type}"
 
 url_list_data="${url_tree_data}/${URL_FILE_NAME}"
 
-data_file_name=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d '/' -f 6 | tr -d '"' | tr -d '\n\r')
+data_file_name=$(${CMD_CURL} -A "${USER_AGENT}" "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d '/' -f 6 | tr -d '"' | tr -d '\n\r')
 
 status_data_file_name="${?}"
 
@@ -96,25 +99,27 @@ fi
 
 url_data="${url_tree_data}/${data_file_name}"
 
-${CMD_CURL} "${url_data}" -o "${WORK_DIR}/${data_file_name}"
+#${CMD_CURL} -A "${USER_AGENT}" "${url_data}" -o "${WORK_DIR}/${data_file_name}"
+${CMD_WGET} -U "${USER_AGENT}" "${url_data}"
 
 status_get_data="${?}"
 
 if [ "${status_get_data}" -ne "${SUCCESS}" ]; then
     print_error "${ERROR_FETCH}"
+    rm "${WORK_DIR}/${data_file_name}"
     exit "${ERROR}"
 fi
 
 declare -r CMD_UNZIP='unzip -n'
 
-${CMD_UNZIP} "${WORK_DIR}/${data_file_name}" -d "${WORK_DIR}" &> /dev/null
+#${CMD_UNZIP} "${WORK_DIR}/${data_file_name}" -d "${WORK_DIR}" &> /dev/null
 
-status_unzip="${?}"
+#status_unzip="${?}"
 
-if [ "${status_unzip}" -ne "${SUCCESS}" ]; then
-    print_error "${ERROR_UNZIP}"
-    exit "${ERROR}"
-fi
+#if [ "${status_unzip}" -ne "${SUCCESS}" ]; then
+#    print_error "${ERROR_UNZIP}"
+#    #exit "${ERROR}"
+#fi
 
 file_opendata="${data_file_name/.zip/.xml}"
 
@@ -138,7 +143,7 @@ declare -r CMD_MAKEMD='make-md.sh'
 
 ${script_dir}/${CMD_MAKEMD} "${file_volgograd_lic}" > "${file_volgograd_md}"
 rm ${WORK_DIR}/*.xml
-rm ${WORK_DIR}/*.zip
+#rm ${WORK_DIR}/*.zip
 
 
 exit "${SUCCESS}"
