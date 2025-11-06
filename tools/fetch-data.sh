@@ -77,6 +77,10 @@ if [ "${type_opendata}" != "${TYPE_LIC}" ]; then
     exit "${ERROR}"
 fi
 
+ddosid=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | tr -d '\n\r')
+
+${CMD_CURL} ${CURL_POST} -A "${USER_AGENT}" "${BASE_URL}${ddosid}" > /dev/null
+
 url_type="${LIST_DATA["${type_opendata}"]}"
 
 url_tree_data="${BASE_URL}${url_type}"
