@@ -23,7 +23,7 @@ declare -r CURL_POST='-X POST'
 declare -r CMD_GREP='grep -s -i'
 declare -r GREP_DATA=',"'
 
-declare -r CMD_WGET='wget -q -t 10'
+declare -r CMD_WGET='wget -q -t 50'
 
 declare -r WORK_DIR="$(pwd)"
 script_dir="${WORK_DIR}/tools"
@@ -79,7 +79,7 @@ fi
 
 ddosid=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | tr -d '\n\r')
 
-${CMD_CURL} ${CURL_POST} -A "${USER_AGENT}" "${BASE_URL}${ddosid}" > /dev/null
+${CMD_CURL} ${CURL_POST} -A "${USER_AGENT}" "${BASE_URL}${ddosid}/" > /dev/null
 
 url_type="${LIST_DATA["${type_opendata}"]}"
 
