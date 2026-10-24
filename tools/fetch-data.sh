@@ -26,7 +26,7 @@ declare -r MAX_PARTS=50
 declare -r CMD_GREP='grep -s -i'
 declare -r GREP_DATA=',"'
 
-declare -r CMD_WGET='wget -q -t 10'
+declare -r CMD_WGET='wget -q -t 50'
 
 declare -r WORK_DIR="$(pwd)"
 script_dir="${WORK_DIR}/tools"
