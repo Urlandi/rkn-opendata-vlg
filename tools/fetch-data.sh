@@ -116,7 +116,7 @@ end_part="${PART_SIZE}"
 
     if [ "${status_get_data}" -ne "${SUCCESS}" ]; then
         print_error "${ERROR_FETCH}"
-        rm "${WORK_DIR}/${data_file_name}*"
+        rm "${WORK_DIR}/${data_file_name}"
         exit "${ERROR}"
     fi
 
@@ -130,8 +130,8 @@ end_part="${PART_SIZE}"
 #    fi
 #done
 
-#cat "${WORK_DIR}/${data_file_name}.*" >> "${WORK_DIR}/${data_file_name}"
-#rm "${WORK_DIR}/${data_file_name}.*"
+#cat ${WORK_DIR}/${data_file_name}.* >> "${WORK_DIR}/${data_file_name}"
+#rm ${WORK_DIR}/${data_file_name}.*
 
 declare -r CMD_UNZIP='unzip -n'
 
