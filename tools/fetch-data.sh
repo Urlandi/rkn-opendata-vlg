@@ -17,8 +17,11 @@ declare -A LIST_DATA
 LIST_DATA=(["${TYPE_LIC}"]='7705846236-LicComm')
 
 declare -r USER_AGENT='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 YaBrowser/25.8.5.890 Yowser/2.5 Safari/537.36'
-declare -r CMD_CURL='curl -s'
+declare -r CMD_CURL='curl -s -m 3600 --connect-timeout 30'
 declare -r CURL_POST='-X POST'
+declare -r CURL_RANGE='--no-clobber -r'
+declare -r PART_SIZE=10000000
+declare -r MAX_PARTS=50
 
 declare -r CMD_GREP='grep -s -i'
 declare -r GREP_DATA=',"'
@@ -79,7 +82,7 @@ fi
 
 ddosid=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1 | tr -d '\n\r')
 
-${CMD_CURL} ${CURL_POST} -A "${USER_AGENT}" "${BASE_URL}${ddosid}" > /dev/null
+${CMD_CURL} ${CURL_POST} "${BASE_URL}${ddosid}" > /dev/null
 
 url_type="${LIST_DATA["${type_opendata}"]}"
 
@@ -87,7 +90,7 @@ url_tree_data="${BASE_URL}${url_type}"
 
 url_list_data="${url_tree_data}/${URL_FILE_NAME}"
 
-data_file_name=$(${CMD_CURL} -A "${USER_AGENT}" "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d '/' -f 6 | tr -d '"' | tr -d '\n\r')
+data_file_name=$(${CMD_CURL} "${url_list_data}" | ${CMD_GREP} "${GREP_DATA}${url_tree_data}" | head -n 1 | cut -d '/' -f 6 | tr -d '"' | tr -d '\n\r')
 
 status_data_file_name="${?}"
 
@@ -103,16 +106,32 @@ fi
 
 url_data="${url_tree_data}/${data_file_name}"
 
-#${CMD_CURL} -A "${USER_AGENT}" "${url_data}" -o "${WORK_DIR}/${data_file_name}"
-${CMD_WGET} -U "${USER_AGENT}" "${url_data}"
+begin_part=0
+end_part="${PART_SIZE}"
 
-status_get_data="${?}"
+#for (( p = 0; p <= MAX_PARTS; p++ )); do
+    ${CMD_CURL} "${url_data}" -o "${WORK_DIR}/${data_file_name}"
 
-if [ "${status_get_data}" -ne "${SUCCESS}" ]; then
-    print_error "${ERROR_FETCH}"
-    rm "${WORK_DIR}/${data_file_name}"
-    exit "${ERROR}"
-fi
+    status_get_data="${?}"
+
+    if [ "${status_get_data}" -ne "${SUCCESS}" ]; then
+        print_error "${ERROR_FETCH}"
+        rm "${WORK_DIR}/${data_file_name}*"
+        exit "${ERROR}"
+    fi
+
+#    begin_part="$((${end_part} + 1))"
+#    end_part="$((${end_part} + ${PART_SIZE}))"
+    
+#    if [ "${p}" -ne "${SUCCESS}" ]; then
+#        if [ "$(stat --printf %s ${WORK_DIR}/${data_file_name}.${p})" -eq "${SUCCESS}" ]; then
+#            break;
+#        fi
+#    fi
+#done
+
+#cat "${WORK_DIR}/${data_file_name}.*" >> "${WORK_DIR}/${data_file_name}"
+#rm "${WORK_DIR}/${data_file_name}.*"
 
 declare -r CMD_UNZIP='unzip -n'
 
